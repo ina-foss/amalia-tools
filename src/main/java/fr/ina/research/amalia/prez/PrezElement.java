@@ -37,6 +37,7 @@ import java.util.Locale;
 import javax.imageio.ImageIO;
 
 import fr.ina.research.amalia.AmaliaException;
+import fr.ina.research.amalia.model.LocalisationBlock;
 import fr.ina.research.amalia.model.MetadataFactory;
 import fr.ina.research.rex.commons.tc.RexTimeCode;
 
@@ -159,8 +160,13 @@ public abstract class PrezElement {
 
 	public void processMetadata(PrezGenerator generator) throws PrezException {
 		try {
-			generator.addToTextBlock(MetadataFactory.createSynchronizedTextLocalisationBlock(getTcIn(), getTcOut(), getText()));
-			generator.addToTimelineBlock(getTimelineBlockId(), MetadataFactory.createLocalisationBlock(getTcIn(), getTcOut()));
+			LocalisationBlock text = MetadataFactory.createSynchronizedTextLocalisationBlock(getTcIn(), getTcOut(), getText());
+			if (hasThumb()) {
+				text.setThumb(getThumb());
+			}
+			generator.addToTextBlock(text);
+			
+			generator.addToTimelineBlock(getTimelineBlockId(), MetadataFactory.createLocalisationBlock(getTcIn(), getTcOut()).setLabel(getText()));
 		} catch (AmaliaException e) {
 			throw new PrezException(e);
 		}

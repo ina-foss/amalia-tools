@@ -37,7 +37,7 @@ import fr.ina.research.amalia.prez.PrezVideoElement;
 * @author Nicolas HERVE - nherve@ina.fr
 */
 public class AmaliaACMMM2015Prez {
-	public final static File temp = new File("/tmp/AmaliaACM2015Prez/temp");
+	public final static File temp = new File("/tmp/AmaliaACM2015Prez");
 	public final static File dest = new File("/home/nherve/Travail/Documents/InaLab/player/acmmm2015/prez");
 	public final static File res = new File("/home/nherve/Travail/Data/amalia");
 	public final static String avconv = "avconv";
@@ -49,9 +49,10 @@ public class AmaliaACMMM2015Prez {
 		acm2015.add(new PrezImageElement("ppt/Diapositive3.PNG", 20).setText("Motivation"));
 		acm2015.add(new PrezImageElement("ppt/Diapositive4.PNG", 20).setText("How"));
 		acm2015.add(new PrezImageElement("ppt/Diapositive5.PNG", 5).setText("Demo"));
-//		acm2015.add(new PrezVideoElement("grab_diginpix.avi", "00:00:12", "00:00:15").setText("DigInPix preview"));
-		acm2015.add(new PrezVideoElement("grab_diginpix.avi", "00:00:12", "00:00:02").setText("DigInPix preview"));
-		acm2015.add(new PrezImageElement("ppt/Diapositive6.PNG", 5).setText("Questions"));
+		acm2015.add(new PrezVideoElement("grab_diginpix.avi", "00:00:12", "00:00:15").setText("DigInPix preview"));
+		acm2015.add(new PrezImageElement("ppt/Diapositive6.PNG", 5).setText("Documentation"));
+		acm2015.add(new PrezVideoElement("grab_website_amalia.avi", "00:00:02", "00:00:20").setText("amalia.js web site"));
+		acm2015.add(new PrezImageElement("ppt/Diapositive7.PNG", 5).setText("Questions"));
 
 		PrezGenerator generator = new PrezGenerator().setAvconvCommand(avconv).setTemporaryDir(temp).setDestinationDir(dest).setResourceDir(res);
 		try {
