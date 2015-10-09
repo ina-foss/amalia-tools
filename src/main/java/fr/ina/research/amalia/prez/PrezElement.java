@@ -1,25 +1,25 @@
 /*
  * Copyright (c) 2015 Institut National de l'Audiovisuel, INA
  *
- * This file is free software: you can redistribute it and/or modify   
+ * This file is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or   
- * (at your option) any later version.                                 
- * 
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
  * Redistributions of source code and compiled versions
- * must retain the above copyright notice, this list of conditions and 
- * the following disclaimer.                                           
- * 
- * Neither the name of the copyright holder nor the names of its       
+ * must retain the above copyright notice, this list of conditions and
+ * the following disclaimer.
+ *
+ * Neither the name of the copyright holder nor the names of its
  * contributors may be used to endorse or promote products derived from
- * this software without specific prior written permission.            
- * 
- * You should have received a copy of the GNU Lesser General Public License   
- * along with this file. If not, see <http://www.gnu.org/licenses/>    
- * 
- * This file is distributed in the hope that it will be useful,        
- * but WITHOUT ANY WARRANTY; without even the implied warranty of      
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the        
+ * this software without specific prior written permission.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this file. If not, see <http://www.gnu.org/licenses/>
+ *
+ * This file is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
  */
 package fr.ina.research.amalia.prez;
@@ -42,9 +42,9 @@ import fr.ina.research.amalia.model.MetadataFactory;
 import fr.ina.research.rex.commons.tc.RexTimeCode;
 
 /**
-*
-* @author Nicolas HERVE - nherve@ina.fr
-*/
+ *
+ * @author Nicolas HERVE - nherve@ina.fr
+ */
 public abstract class PrezElement {
 	private final static RenderingHints HINTS;
 
@@ -56,7 +56,7 @@ public abstract class PrezElement {
 		HINTS.put(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
 		HINTS.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 	}
-	
+
 	private static DecimalFormat df = new DecimalFormat("000.00", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
 	private String resourceName;
 	private File resourceFile;
@@ -75,7 +75,7 @@ public abstract class PrezElement {
 		setText("---");
 		setThumb(null);
 	}
-	
+
 	protected void generateThumbnail(File from, RexTimeCode tc, PrezGenerator generator) throws PrezException {
 		try {
 			BufferedImage img = ImageIO.read(from);
@@ -91,21 +91,21 @@ public abstract class PrezElement {
 
 			int wo = (generator.getThumbWidth() - nw) / 2;
 			int ho = (generator.getThumbHeight() - nh) / 2;
-			
+
 			BufferedImage thumb = new BufferedImage(generator.getThumbWidth(), generator.getThumbHeight(), img.getType());
 			Graphics2D g2 = (Graphics2D) thumb.getGraphics();
-			
+
 			AffineTransform t = new AffineTransform();
 			t.translate(wo, ho);
 			t.scale(fr, fr);
-			g2.setRenderingHints(HINTS); 
+			g2.setRenderingHints(HINTS);
 			g2.drawImage(img, t, null);
-			
+
 			g2.dispose();
-			
+
 			String thumbFile = generator.getThumbsSubdir() + "/" + tc.toString("%02d_%02d_%02d_%04d") + ".png";
 			ImageIO.write(thumb, "png", new File(generator.getDestinationDir(), thumbFile));
-			
+
 			setThumb(thumbFile);
 		} catch (IOException e) {
 			throw new PrezException(e);
@@ -119,6 +119,8 @@ public abstract class PrezElement {
 	public int getHeight() {
 		return height;
 	}
+
+	public abstract double getPotentialDuration() throws PrezException;
 
 	public File getResourceFile() {
 		return resourceFile;
@@ -165,7 +167,7 @@ public abstract class PrezElement {
 				text.setThumb(getThumb());
 			}
 			generator.addToTextBlock(text);
-			
+
 			generator.addToTimelineBlock(getTimelineBlockId(), MetadataFactory.createLocalisationBlock(getTcIn(), getTcOut()).setLabel(getText()));
 		} catch (AmaliaException e) {
 			throw new PrezException(e);
