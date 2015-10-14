@@ -37,6 +37,8 @@ import javax.imageio.ImageIO;
  * @author Nicolas HERVE - nherve@ina.fr
  */
 public class PrezImageElement extends PrezElement {
+	public final static String TIMELINE_BLOCK_ID = "Slide";
+	
 	public PrezImageElement(String resourceName, double duration) {
 		super(resourceName);
 
@@ -50,11 +52,11 @@ public class PrezImageElement extends PrezElement {
 
 	@Override
 	public String getTimelineBlockId() throws PrezException {
-		return "Slide";
+		return TIMELINE_BLOCK_ID;
 	}
 
 	@Override
-	public void init(PrezGenerator generator) throws PrezException {
+	public void initWidthHeightDuration(PrezGenerator generator) throws PrezException {
 		try {
 			BufferedImage img = ImageIO.read(getResourceFile());
 			setWidth(img.getWidth());
@@ -66,6 +68,7 @@ public class PrezImageElement extends PrezElement {
 
 	@Override
 	public void process(PrezGenerator generator) throws PrezException {
+		generator.logGenerator(this, "Processing");
 		try {
 			for (int f = 0; f < generator.getNbFrame(getDuration()); f++) {
 				File frameFile = generator.getCurrentFrameFile();
@@ -78,8 +81,8 @@ public class PrezImageElement extends PrezElement {
 	}
 
 	@Override
-	public void processThumbnail(PrezGenerator generator) throws PrezException {
-		generateThumbnail(getResourceFile(), getTcIn(), generator);
+	public String processThumbnail(PrezGenerator generator) throws PrezException {
+		return generateThumbnail(getResourceFile(), getTcIn(), generator);
 	}
 
 	@Override

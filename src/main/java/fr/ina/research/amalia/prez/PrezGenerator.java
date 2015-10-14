@@ -53,11 +53,8 @@ public class PrezGenerator extends RexDefaultLogger {
 	private String thumbsSubdir;
 	private File resourceDir;
 	private String avconvCommand;
-	private int width;
-	private int height;
 	private int thumbWidth;
 	private int thumbHeight;
-	private double duration;
 	private int currentFrame;
 	private double fps;
 	private MetadataBlock textMetadata;
@@ -78,10 +75,10 @@ public class PrezGenerator extends RexDefaultLogger {
 		textMetadata.addToRootLocalisationBlock(block);
 	}
 
-	public void addToTimelineBlock(String key, LocalisationBlock block) throws PrezException {
+	public void addToTimelineBlock(String key, LocalisationBlock block, double fullDuration) throws PrezException {
 		try {
 			if (!timelineMetadata.containsKey(key)) {
-				timelineMetadata.put(key, createTimelineBlock(metadataPrefix + "-" + key));
+				timelineMetadata.put(key, createTimelineBlock(metadataPrefix + "-" + key, fullDuration));
 			}
 			timelineMetadata.get(key).addToRootLocalisationBlock(block);
 		} catch (PrezException e) {
@@ -89,11 +86,11 @@ public class PrezGenerator extends RexDefaultLogger {
 		}
 	}
 
-	private MetadataBlock createTimelineBlock(String id) throws PrezException {
+	private MetadataBlock createTimelineBlock(String id, double fullDuration) throws PrezException {
 		try {
 			MetadataBlock timelineMetadata = MetadataFactory.createMetadataBlock(id, MetadataType.SEGMENTATION);
 			timelineMetadata.setVersion(1);
-			timelineMetadata.setRootLocalisationBlock(new RexTimeCode(0d), new RexTimeCode(duration));
+			timelineMetadata.setRootLocalisationBlock(new RexTimeCode(0d), new RexTimeCode(fullDuration));
 
 			return timelineMetadata;
 		} catch (AmaliaException e) {
@@ -168,21 +165,16 @@ public class PrezGenerator extends RexDefaultLogger {
 		return new File(temporaryDir, "f_" + df.format(frame) + ".png");
 	}
 
-	public RexTimeCode getPotentialDuration(Prez prez) throws PrezException {
-		double fd = 0;
-		for (PrezElement pe : prez) {
-			fd += pe.getPotentialDuration();
-		}
-
-		return new RexTimeCode(fd);
-	}
-
 	public int getNbFrame(double duration) {
 		return (int) (duration * fps);
 	}
 
 	public File getResourceDir() {
 		return resourceDir;
+	}
+
+	public File getResourceFile(String resource) {
+		return new File(resourceDir, resource);
 	}
 
 	public File getTemporaryDir() {
@@ -199,6 +191,10 @@ public class PrezGenerator extends RexDefaultLogger {
 
 	public int getThumbWidth() {
 		return thumbWidth;
+	}
+
+	public void logGenerator(PrezElement pe, String action) {
+		logInfo("[" + df.format(currentFrame) + "] " + action + " " + pe.toString());
 	}
 
 	public void moveToFrame(int currentFrame) {
@@ -236,10 +232,6 @@ public class PrezGenerator extends RexDefaultLogger {
 	}
 
 	private void preProcess(Prez prez) throws PrezException {
-		width = 0;
-		height = 0;
-		duration = 0;
-
 		if (temporaryDir.exists()) {
 			String[] cmd = { "sh", "-c", "rm -fr " + temporaryDir.getAbsolutePath() + "/*.png" };
 			logInfo("Cleaning " + temporaryDir.getAbsolutePath());
@@ -253,32 +245,11 @@ public class PrezGenerator extends RexDefaultLogger {
 		metadataPrefix = prez.getName();
 
 		try {
-			RexTimeCode previous = new RexTimeCode(0, getFps());
+			prez.initResource(this);
+			prez.initWidthHeightDuration(this);
+			prez.initTcInTcOut(new RexTimeCode(0, getFps()));
 
-			for (PrezElement pe : prez) {
-				File rf = new File(resourceDir, pe.getResourceName());
-				if (rf.exists() && rf.isFile() && rf.canRead()) {
-					pe.setResourceFile(rf);
-					pe.init(this);
-					logInfo("Pre-processing " + pe.toString());
-					if (width == 0) {
-						width = pe.getWidth();
-						height = pe.getHeight();
-					} else {
-						if ((width != pe.getWidth()) || (height != pe.getHeight())) {
-							throw new PrezException("Element size doesn't match with previous elements");
-						}
-					}
-					duration += pe.getDuration();
-					pe.setTcIn(previous);
-					previous = new RexTimeCode(previous.getSecond());
-					previous.add(pe.getDuration());
-					pe.setTcOut(previous);
-				} else {
-					throw new PrezException("Unable to acces to file " + rf.getAbsolutePath());
-				}
-			}
-			RexTimeCode rtcd = new RexTimeCode(duration);
+			RexTimeCode rtcd = new RexTimeCode(prez.getDuration());
 			logInfo("Presentation duration : " + rtcd);
 
 			textMetadata = MetadataFactory.createMetadataBlock(metadataPrefix + "-text", MetadataType.SYNCHRONIZED_TEXT);
@@ -295,10 +266,9 @@ public class PrezGenerator extends RexDefaultLogger {
 		currentFrame = 1;
 
 		for (PrezElement pe : prez) {
-			logInfo("[" + df.format(currentFrame) + "] Processing " + pe.toString());
 			pe.process(this);
-			pe.processThumbnail(this);
-			pe.processMetadata(this);
+			pe.setThumb(pe.processThumbnail(this));
+			pe.processMetadata(this, prez.getDuration());
 		}
 	}
 

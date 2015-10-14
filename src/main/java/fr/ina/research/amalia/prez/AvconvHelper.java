@@ -42,7 +42,7 @@ import fr.ina.research.rex.commons.tc.RexTimeCode;
 public class AvconvHelper {
 
 	public static String[] generateFinalVideoCommand(PrezGenerator generator, File out) {
-		String[] command = { generator.getAvconvCommand(), "-framerate", "" + generator.getFps(), "-start_number", "1", "-f", "image2", "-i", generator.getTemporaryDir() + "/f_%08d.png", "-c:v", "h264", "-crf", "1", out.getAbsolutePath() };
+		String[] command = { generator.getAvconvCommand(), "-threads", "auto", "-framerate", "" + generator.getFps(), "-start_number", "1", "-f", "image2", "-i", generator.getTemporaryDir() + "/f_%08d.png", "-c:v", "h264", "-crf", "1", out.getAbsolutePath() };
 		return command;
 	}
 
@@ -92,10 +92,10 @@ public class AvconvHelper {
 
 	public static String[] getVideoExtractFramesCommand(PrezGenerator generator, PrezVideoElement video) {
 		if ((video.getStart() != null) && (video.getLength() != null)) {
-			String[] command = { generator.getAvconvCommand(), "-i", video.getResourceFile().getAbsolutePath(), "-r", "" + generator.getFps(), "-ss", video.getStart(), "-t", video.getLength(), "-start_number", "" + generator.getCurrentFrame(), "-f", "image2", generator.getTemporaryDir() + "/f_%08d.png" };
+			String[] command = { generator.getAvconvCommand(), "-threads", "auto", "-i", video.getResourceFile().getAbsolutePath(), "-r", "" + generator.getFps(), "-ss", video.getStart(), "-t", video.getLength(), "-start_number", "" + generator.getCurrentFrame(), "-f", "image2", generator.getTemporaryDir() + "/f_%08d.png" };
 			return command;
 		} else {
-			String[] command = { generator.getAvconvCommand(), "-i", video.getResourceFile().getAbsolutePath(), "-r", "" + generator.getFps(), "-start_number", "" + generator.getCurrentFrame(), "-f", "image2", generator.getTemporaryDir() + "/f_%08d.png" };
+			String[] command = { generator.getAvconvCommand(), "-threads", "auto", "-i", video.getResourceFile().getAbsolutePath(), "-r", "" + generator.getFps(), "-start_number", "" + generator.getCurrentFrame(), "-f", "image2", generator.getTemporaryDir() + "/f_%08d.png" };
 			return command;
 		}
 	}

@@ -68,15 +68,16 @@ public abstract class PrezElement {
 	private String text;
 	private String thumb;
 
-	public PrezElement(String resourceName) {
+	public PrezElement() {
 		super();
-
-		this.resourceName = resourceName;
-		setText("---");
-		setThumb(null);
 	}
 
-	protected void generateThumbnail(File from, RexTimeCode tc, PrezGenerator generator) throws PrezException {
+	public PrezElement(String resourceName) {
+		this();
+		this.resourceName = resourceName;
+	}
+
+	protected String generateThumbnail(File from, RexTimeCode tc, PrezGenerator generator) throws PrezException {
 		try {
 			BufferedImage img = ImageIO.read(from);
 			int ow = img.getWidth();
@@ -104,9 +105,10 @@ public abstract class PrezElement {
 			g2.dispose();
 
 			String thumbFile = generator.getThumbsSubdir() + "/" + tc.toString("%02d_%02d_%02d_%04d") + ".png";
-			ImageIO.write(thumb, "png", new File(generator.getDestinationDir(), thumbFile));
+			File tf = new File(generator.getDestinationDir(), thumbFile);
+			ImageIO.write(thumb, "png", tf);
 
-			setThumb(thumbFile);
+			return thumbFile;
 		} catch (IOException e) {
 			throw new PrezException(e);
 		}
@@ -156,11 +158,36 @@ public abstract class PrezElement {
 		return thumb != null;
 	}
 
-	public abstract void init(PrezGenerator generator) throws PrezException;
+	public void initResource(PrezGenerator generator) throws PrezException {
+		generator.logInfo("Pre-processing " + toString());
+
+		if (resourceName != null) {
+			File rf = generator.getResourceFile(resourceName);
+			if (rf.exists() && rf.isFile() && rf.canRead()) {
+				setResourceFile(rf);
+			} else {
+				throw new PrezException("Unable to access resource file " + rf.getAbsolutePath());
+			}
+		}
+	}
+
+	public RexTimeCode initTcInTcOut(RexTimeCode previous) throws PrezException {
+		try {
+			setTcIn(previous);
+			previous = new RexTimeCode(previous.getSecond());
+			previous.add(getDuration());
+			setTcOut(previous);
+			return previous;
+		} catch (AmaliaException e) {
+			throw new PrezException(e);
+		}
+	}
+
+	public abstract void initWidthHeightDuration(PrezGenerator generator) throws PrezException;
 
 	public abstract void process(PrezGenerator generator) throws PrezException;
 
-	public void processMetadata(PrezGenerator generator) throws PrezException {
+	public void processMetadata(PrezGenerator generator, double fullDuration) throws PrezException {
 		try {
 			LocalisationBlock text = MetadataFactory.createSynchronizedTextLocalisationBlock(getTcIn(), getTcOut(), getText());
 			if (hasThumb()) {
@@ -168,13 +195,13 @@ public abstract class PrezElement {
 			}
 			generator.addToTextBlock(text);
 
-			generator.addToTimelineBlock(getTimelineBlockId(), MetadataFactory.createLocalisationBlock(getTcIn(), getTcOut()).setLabel(getText()));
+			generator.addToTimelineBlock(getTimelineBlockId(), MetadataFactory.createLocalisationBlock(getTcIn(), getTcOut()).setLabel(getText()), fullDuration);
 		} catch (AmaliaException e) {
 			throw new PrezException(e);
 		}
 	}
 
-	public abstract void processThumbnail(PrezGenerator generator) throws PrezException;
+	public abstract String processThumbnail(PrezGenerator generator) throws PrezException;
 
 	protected void setDuration(double duration) {
 		this.duration = duration;

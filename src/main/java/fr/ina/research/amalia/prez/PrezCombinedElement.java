@@ -24,29 +24,21 @@
  */
 package fr.ina.research.amalia.prez;
 
+
 /**
  *
  * @author Nicolas HERVE - nherve@ina.fr
  */
-public class Prez extends PrezElementContainer {
-	private String name;
+public class PrezCombinedElement extends PrezElementContainer {
+	private String timelineBlockId;
 
-	public Prez(String name) {
+	public PrezCombinedElement(String timelineBlockId) {
 		super();
-
-		setName(name);
-	}
-
-	public String getName() {
-		return name;
+		this.timelineBlockId = timelineBlockId;
 	}
 
 	@Override
 	public String getTimelineBlockId() throws PrezException {
-		return null;
-	}
-
-	public void setName(String name) {
-		this.name = name;
+		return timelineBlockId;
 	}
 }

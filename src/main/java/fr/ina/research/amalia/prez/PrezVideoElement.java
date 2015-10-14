@@ -36,6 +36,7 @@ import fr.ina.research.rex.commons.tc.RexTimeCode;
  * @author Nicolas HERVE - nherve@ina.fr
  */
 public class PrezVideoElement extends PrezElement {
+	public final static String TIMELINE_BLOCK_ID = "Video";
 	private String start;
 	private String end;
 
@@ -71,7 +72,7 @@ public class PrezVideoElement extends PrezElement {
 
 	@Override
 	public String getTimelineBlockId() throws PrezException {
-		return "Video";
+		return TIMELINE_BLOCK_ID;
 	}
 
 	private RexTimeCode getTime(String t) throws PrezException {
@@ -90,7 +91,7 @@ public class PrezVideoElement extends PrezElement {
 	}
 
 	@Override
-	public void init(PrezGenerator generator) throws PrezException {
+	public void initWidthHeightDuration(PrezGenerator generator) throws PrezException {
 		String result = generator.exec(AvconvHelper.getVideoInfoCommand(generator, this));
 		Dimension dim = AvconvHelper.getDimensions(result);
 		setWidth((int) dim.getWidth());
@@ -118,6 +119,7 @@ public class PrezVideoElement extends PrezElement {
 
 	@Override
 	public void process(PrezGenerator generator) throws PrezException {
+		generator.logGenerator(this, "Processing");
 		generator.exec(AvconvHelper.getVideoExtractFramesCommand(generator, this));
 		int last = generator.getCurrentFrame() + generator.getNbFrame(getDuration());
 		for (int f = last - 2; f < (f + 3); f++) {
@@ -129,10 +131,10 @@ public class PrezVideoElement extends PrezElement {
 	}
 
 	@Override
-	public void processThumbnail(PrezGenerator generator) throws PrezException {
+	public String processThumbnail(PrezGenerator generator) throws PrezException {
 		double middleTime = (getTcOut().getSecond() + getTcIn().getSecond()) / 2;
 		int middleFrame = generator.getNbFrame(middleTime);
-		generateThumbnail(generator.getFrameFile(middleFrame), new RexTimeCode(middleTime), generator);
+		return generateThumbnail(generator.getFrameFile(middleFrame), new RexTimeCode(middleTime), generator);
 	}
 
 	@Override
