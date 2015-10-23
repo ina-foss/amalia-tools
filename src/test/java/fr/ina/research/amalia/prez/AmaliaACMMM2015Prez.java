@@ -49,9 +49,9 @@ public class AmaliaACMMM2015Prez {
 		acm2015.add(new PrezImageElement("ppt/Diapositive1.PNG", 20).setText("Title"));
 		acm2015.add(new PrezImageElement("ppt/Diapositive2.PNG", 28).setText("Amalia.js"));
 		acm2015.add(new PrezImageElement("ppt/Diapositive3.PNG", 28).setText("Motivation"));
-		acm2015.add(new PrezImageElement("ppt/Diapositive4.PNG", 20).setText("How"));
-		acm2015.add(new PrezImageElement("ppt/Diapositive5.PNG", 3).setText("Demo"));
-		acm2015.add(new PrezVideoElement("grab_timeline.avi", "00:00:03", "00:00:39").setText("Amalia - simple timeline"));
+		acm2015.add(new PrezImageElement("ppt/Diapositive4.PNG", 30).setText("How"));
+		acm2015.add(new PrezImageElement("ppt/Diapositive5.PNG", 5).setText("Demo"));
+		acm2015.add(new PrezVideoElement("grab_timeline.avi", "00:00:11", "00:00:39").setText("Amalia - simple timeline"));
 //		acm2015.add(new PrezVideoElement("grab_zoom.avi", "00:00:14", "00:00:35").setText("Amalia - zoom in timeline"));
 		acm2015.add(new PrezImageElement("ppt/Diapositive6.PNG", 5).setText("Research prototypes"));
 //		acm2015.add(new PrezVideoElement("grab_diginpix.avi", "00:00:12", "00:00:27").setText("Research prototype - DigInPix"));
@@ -75,13 +75,13 @@ public class AmaliaACMMM2015Prez {
 		acm2015.add(new PrezVideoElement("grab_html_integration_2.avi", "00:00:00", "00:00:35").setText("Amalia - HTML integration and metadata binding"));
 		
 		acm2015.add(new PrezImageElement("ppt/Diapositive11.PNG", 5).setText("Documentation & Tools"));
-		acm2015.add(new PrezVideoElement("grab_website_amalia_2.avi", "00:00:00", "00:00:20").setText("amalia.js web site"));
+		acm2015.add(new PrezVideoElement("grab_website_amalia_2.avi", "00:00:00", "00:00:18").setText("amalia.js web site"));
 		PrezCombinedElement pce_github = new PrezCombinedElement(PrezVideoElement.TIMELINE_BLOCK_ID);
 		pce_github.setText("Amalia - Github projects and model XSD");
 		pce_github.add(new PrezVideoElement("grab_github_2.avi", "00:00:00", "00:00:10"));
 		pce_github.add(new PrezVideoElement("grab_github_2.avi", "00:00:16", "00:00:27"));
-		pce_github.add(new PrezVideoElement("grab_github_2.avi", "00:00:31", "00:00:40"));
-		pce_github.add(new PrezVideoElement("grab_github_2.avi", "00:00:47", "00:00:58"));
+		pce_github.add(new PrezVideoElement("grab_github_2.avi", "00:00:31", "00:00:39"));
+		pce_github.add(new PrezVideoElement("grab_github_2.avi", "00:00:47", "00:00:57"));
 		acm2015.add(pce_github);
 		
 		acm2015.add(new PrezImageElement("ppt/Diapositive12.PNG", 5).setText("Professional applications"));
