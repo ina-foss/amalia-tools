@@ -22,7 +22,7 @@
 		<dependency>
 			<groupId>fr.ina.research</groupId>
 			<artifactId>amalia-model</artifactId>
-			<version>0.2.7-SNAPSHOT</version>
+			<version>0.2.7</version>
 		</dependency>		
 	</dependencies>
 
