@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fr.ina.research</groupId>
 	<artifactId>amalia-tools</artifactId>
-	<version>0.2.11-SNAPSHOT</version>
+	<version>0.2.10-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>Tools for amalia metadata model</description>
